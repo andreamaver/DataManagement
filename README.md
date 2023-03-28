@@ -30,6 +30,8 @@ The data was downloaded using the spotify APIs and scraping web pages to retriev
 
 You can check out the full paper (available only in Italian) describing all the steps in great detail at: [Grafo di brani e artisti delle ultime dieci edizioni del Festival di Sanremo](https://github.com/andreamaver/DataManagement/blob/main/DataMan_Maver_Radaelli_Zanotti.pdf "DataMan_Maver_Radaelli_Zanotti.pdf").
 
+In the [Data](https://github.com/andreamaver/DataManagement/tree/main/Data) folder all the files used to create the final database can be found; in the [Notebook](https://github.com/andreamaver/DataManagement/tree/main/Notebook) one the code for both downloading and manipulaing the data is stored. For the project we used both R and Python and, unfortunately, the code isn't particularly clean.
+
 
   
 
