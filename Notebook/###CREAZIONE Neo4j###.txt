@@ -1,0 +1,87 @@
+match (n) delete n
+match () -[s]->() delete s
+
+###CREAZIONE NODI CANZONI### 
+## 237 labels, created 237 nodes, set 3651 properties
+LOAD CSV WITH HEADERS FROM 'file:/tracce_final.csv' AS row FIELDTERMINATOR ','
+CREATE (c:canzone)
+set c=row
+
+###CREAZIONE NODI EDIZIONI### 
+10 labels, created 10 nodes, set 10 properties
+LOAD CSV WITH HEADERS FROM 'file:/edizione.csv' AS row FIELDTERMINATOR ','
+create(:edizione {anno: row.anno})
+
+###UNIONE CANZONI A EDIZIONE#
+##  237 relationships
+MATCH (c: canzone)
+MATCH (e:edizione)
+WHERE c.edizione = e.anno
+MERGE (c)-[:partecipa]->(e)
+RETURN *
+
+###  588 labels, created 294 nodes, set 294 properties, created 474 relationships
+## SOLO_AUTORI
+LOAD CSV WITH HEADERS FROM 'file:///solo_autori.csv' AS row
+MERGE (c:canzone {id:row.id_track})
+merge (p:persona :autore {nome:row.Autori})
+create (p)-[s:scrive]->(c)
+
+
+## 264 labels, created 88 nodes, set 176 properties, created 157 relationships
+LOAD CSV WITH HEADERS FROM 'file:///artisti_autori.csv' AS row
+MERGE (c:canzone {id:row.id_track})
+merge (p:persona :artista :autore {artist:row.id_artist, nome:row.Autori})
+create (p)-[s:scrive]->(c)
+
+## 98 labels, created 49 nodes, set 98 properties
+LOAD CSV WITH HEADERS FROM 'file:///solo_artisti.csv' AS row
+merge (p:persona :artista {artist:row.id_artist, nome:row.nome})
+
+##26 labels, created 26 nodes, set 75 properties
+LOAD CSV WITH HEADERS FROM 'file:///solo_gruppi.csv' AS row
+CREATE (:band {nome:row.name, artist: row.id_artist, periodo_attivita:row.activity_period})
+
+## 216 relationships
+INTERPRETA
+LOAD CSV WITH HEADERS FROM 'file:///pivot_artisti_final.csv' AS row
+match (c:canzone {id:row.id_track})
+match (p:persona :artista {artist:row.id_artist})
+create(p)-[:interpreta]->(c)
+
+## 40 relationships
+INTERPRETA
+LOAD CSV WITH HEADERS FROM 'file:///pivot_artisti_final.csv' AS row
+match (c:canzone {id:row.id_track})
+match (b:band {artist:row.id_artist})
+create(b)-[:interpreta]->(c)
+
+## 60 labels, created 60 nodes, set 60 properties 
+creazione nodi generi
+LOAD CSV WITH HEADERS FROM 'file:///generi_nodi.csv' AS row
+create (g:genere{genre:row.genere})
+
+## 229 relationships
+APPARTIENE ARTISTI
+LOAD CSV WITH HEADERS FROM 'file:///generi_artisti.csv' AS row
+match (p:persona {artist:row.id_artist})
+match (g:genere {genre:row.genres})
+create (p)-[:appartiene]->(g)
+
+##
+APPARTIENE BANF
+LOAD CSV WITH HEADERS FROM 'file:///generi_artisti.csv' AS row
+match (b:band {artist:row.id_artist})
+match (g:genere {genre:row.genres})
+create (p)-[:appartiene]->(g)
+
+
+## 794 relationships
+COLLABORA
+LOAD CSV WITH HEADERS FROM 'file:///collaborazioni.csv' AS row
+match (p:persona {nome:row.Autori})
+match (g:persona {nome:row.colla})
+create (g)-[:collabora{anno:row.edizione, canzone: row.id_track}]->(p)
+
+
+call db.schema.visualization
