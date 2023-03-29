@@ -51,7 +51,7 @@ In the [Data](https://github.com/andreamaver/DataManagement/tree/main/Data) fold
 
   
 
-* [LinkedIn](https://www.linkedin.com/in/andrea-maver-b19047259/)
+* [LinkedIn](https://www.linkedin.com/in/andrea-maver/)
 
   
 
